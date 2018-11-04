@@ -7,6 +7,8 @@ import cv2
 import tensorflow as tf
 from models.recognizer import FruitRecognizer
 
+from RequestValidator import getImageByteArray
+
 global graph
 graph = tf.get_default_graph()
 
@@ -18,15 +20,20 @@ reco = FruitRecognizer(model_path="models\saved_models\model1_vgg16_architecture
 
 app = Flask(__name__)
 
+
+
 # route http posts to this method
 @app.route('/api/recognize', methods=['POST'])
 def test():
 
+    fileReceived = getImageByteArray(request.files)
 
-    file = request.files['image']
-    data = file.read()
+    if not (fileReceived[0]):
+        response = {'message': 'No file received'}
+        response_pickled = jsonpickle.encode(response)
+        return Response(response=response_pickled, status=200, mimetype="application/json")
 
-    image = np.asarray(bytearray(data), dtype="uint8")
+    image = np.asarray(bytearray(fileReceived[1]), dtype="uint8")
     image = cv2.imdecode(image, cv2.IMREAD_COLOR)
 
     with graph.as_default():
