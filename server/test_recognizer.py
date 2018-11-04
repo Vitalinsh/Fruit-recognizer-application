@@ -13,11 +13,11 @@ class RecognizerTest(unittest.TestCase):
 		'''
 		Test with using MagicMock
 		'''	
-		model_path = os.path.join("models", "saved_models", "model1_vgg16_architecture.json")
-		weights_path = os.path.join("models", "saved_models", "model1_vgg16_best1_weights.hdf5")
+		model_path = os.path.join("model1_vgg16_architecture.json")
+		weights_path = os.path.join("model1_vgg16_best1_weights.hdf5")
 		
-		model =  recognizer.FruitRecognizer(model_path=model_path,
-											weights_path=weights_path)
+		model =  recognizer.FruitRecognizer(model_path="model1_vgg16_architecture.json",
+											weights_path="model1_vgg16_best1_weights.hdf5")
 		
 		image = np.ones((100, 100, 3)) * 111
 		model.img_preprocessing = MagicMock(return_value=[np.ones((1, 100, 100, 3)), True])
@@ -36,8 +36,8 @@ class RecognizerTest(unittest.TestCase):
 		image = np.ones((100, 100, 3)) * 200	
 		y = []
 		for i in range(4):
-			model = recognizer.FruitRecognizer(model_path=model_path,
-											weights_path=weights_path) 
+			model = recognizer.FruitRecognizer(model_path="model1_vgg16_architecture.json",
+											weights_path="model1_vgg16_best1_weights.hdf5") 
 											
 			model.img_preprocessing = MagicMock(return_value=[np.ones((1, 100, 100, 3)), True])
 			y.append(model.predict(image))
@@ -52,8 +52,8 @@ class RecognizerTest(unittest.TestCase):
 		weights_path = os.path.join("models", "saved_models", "model1_vgg16_best1_weights.hdf5")
 		
 		image = np.ones((2000, 1000, 3)) * 200
-		model =  recognizer.FruitRecognizer(model_path=model_path,
-											weights_path=weights_path)
+		model =  recognizer.FruitRecognizer(model_path="model1_vgg16_architecture.json",
+											weights_path="model1_vgg16_best1_weights.hdf5")
 		
 		clear_img, squared_img = model.img_preprocessing(image)
 		
