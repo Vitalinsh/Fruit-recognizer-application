@@ -3,25 +3,56 @@ import cv2
 import os
 from keras.models import model_from_json
 
+from keras.models import Sequential
+from keras.layers import Dense, Flatten, Dropout, Conv2D, MaxPooling2D, BatchNormalization
+from keras.regularizers import l2
+from keras.applications import VGG16
+
 class FruitRecognizer():
 	"""Class for classification fruit on the picture""" 
 	
 	def __init__(self, model_path="saved_models\model1_vgg16_architecture.json",
-				weights_path="saved_models\model1_vgg16_best1_weights.hdf5"):
+				weights_path="saved_models\model1_vgg16_best1_weights.hdf5",
+				create_new_cnn=False):
 
 		'''
 		Parameters:
 		model_path : json file path with the model to load.
 		path_weigths : hdf5 file path with weights to load.
 		'''
-		
-		with open(model_path, "r") as json_file:
-			loaded_model = json_file.read()
-		self.model = model_from_json(loaded_model)
-        
-		self.model.load_weights(weights_path)
+		if create_new_cnn:
+			np.random.seed(5)
+			vgg16_net = VGG16(weights='imagenet', 
+                include_top=False, 
+                input_shape=(100, 100, 3))
+				
+			vgg16_net.trainable = False 
 			
-		self.model.compile(loss="categorical_crossentropy", optimizer="adam", metrics=["accuracy"])
+			self.model = Sequential()
+
+			self.model.add(vgg16_net)
+			self.model.add(Flatten())
+			self.model.add(Dense(256, activation="relu", kernel_initializer="he_uniform", kernel_regularizer=l2(0.01)))
+			self.model.add(BatchNormalization())
+			self.model.add(Dropout(0.5))
+			self.model.add(Dense(128, activation="relu", kernel_initializer="he_uniform", kernel_regularizer=l2(0.01)))
+			self.model.add(BatchNormalization())
+			self.model.add(Dropout(0.5))
+			
+			self.model.add(Dense(20, activation="softmax", kernel_initializer="glorot_uniform", kernel_regularizer=l2(0.01)))
+
+			self.model.compile(loss='categorical_crossentropy',
+						optimizer="adam", 
+						metrics=['accuracy'])
+
+		else:
+			with open(model_path, "r") as json_file:
+				loaded_model = json_file.read()
+			self.model = model_from_json(loaded_model)
+			
+			self.model.load_weights(weights_path)
+				
+			self.model.compile(loss="categorical_crossentropy", optimizer="adam", metrics=["accuracy"])
 
  
 
