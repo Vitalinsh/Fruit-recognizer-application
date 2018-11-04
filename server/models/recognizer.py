@@ -1,8 +1,8 @@
 import numpy as np
 import cv2
 import os
-from keras.models import model_from_json
 
+from keras.models import model_from_json
 from keras.models import Sequential
 from keras.layers import Dense, Flatten, Dropout, Conv2D, MaxPooling2D
 from keras.regularizers import l2
@@ -94,7 +94,5 @@ class FruitRecognizer():
 		image = image / 255
 		
 		return image, squared_img
-		
-		
 		
 		
