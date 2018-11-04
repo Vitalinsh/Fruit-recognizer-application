@@ -7,34 +7,45 @@ import cv2
 
 from src.models.recognizer import FruitRecognizer
 
-#version = subprocess.check_output(["git", "describe"]).strip()
+def getModelApi():
+    reco = FruitRecognizer(model_path="models\saved_models\model1_vgg16_architecture.json",
+                           weights_path="models\saved_models\model1_vgg16_best1_weights.hdf5")
+
+    def predict(image):
+        return reco.predict(image)
+
+    return predict
+
+
+version = subprocess.check_output(["git", "describe"]).strip()
+print(version)
+predict = getModelApi()
+
 app = Flask(__name__)
 
 # route http posts to this method
-@app.route('/api/test', methods=['POST'])
+@app.route('/api/recognize', methods=['POST'])
 def test():
-    r = request
-    # convert string of image data to uint8
-    nparr = np.fromstring(r.data, np.uint8)
 
-    # decode image
-    img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
 
-    # do some fancy processing here....
+    file = request.files['image']
+    data = file.read()
+
+    image = np.asarray(bytearray(data), dtype="uint8")
+    image = cv2.imdecode(image, cv2.IMREAD_COLOR)
 
     reco = FruitRecognizer(model_path="models\saved_models\model1_vgg16_architecture.json",
                            weights_path="models\saved_models\model1_vgg16_best1_weights.hdf5")
 
-    res = reco.predict(img)
+    res = reco.predict(image)
 
     # build a response dict to send back to client
-    response = {'message': 'Your fruict is {}'.format(res)
-                }
-    # encode response using jsonpickle
+    response = {'message': 'Your fruit is {}'.format(res)}
+
     response_pickled = jsonpickle.encode(response)
 
     return Response(response=response_pickled, status=200, mimetype="application/json")
 
-
 # start flask app
-app.run(host="0.0.0.0", port=5000)
+
+app.run(host='0.0.0.0', debug=True, threaded=False)

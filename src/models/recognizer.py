@@ -1,7 +1,9 @@
 import numpy as np
 import cv2
 import os
+import tensorflow
 from keras.models import model_from_json
+from keras import backend as K
 
 class FruitRecognizer():
     """Class for classification fruit on the picture"""
@@ -13,7 +15,8 @@ class FruitRecognizer():
         model_path : json file path with the model to load.
         path_weigths : hdf5 file path with weights to load.
         """
-        
+        K.clear_session()
+
         with open(model_path, "r") as json_file:
             loaded_model = json_file.read()
         self.model = model_from_json(loaded_model)
@@ -36,8 +39,10 @@ class FruitRecognizer():
 
         if return_probs:
             predict = self.model.predict(image)
+
         else:
             predict = np.argmax(self.model.predict(image))
+            K.clear_session()
         
         return predict
         
