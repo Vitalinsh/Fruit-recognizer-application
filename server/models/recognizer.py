@@ -4,40 +4,52 @@ import os
 from keras.models import model_from_json
 
 class FruitRecognizer():
-    """Class for classification fruit on the picture"""
-    
-    def __init__(self, model_path="saved_models\model1_vgg16_architecture.json",
-                 weights_path="saved_models\model1_vgg16_best1_weights.hdf5"):
-        """
-        Parameters:
-        model_path : json file path with the model to load.
-        path_weigths : hdf5 file path with weights to load.
-        """
-        
-        with open(model_path, "r") as json_file:
-            loaded_model = json_file.read()
-        self.model = model_from_json(loaded_model)
+	"""Class for classification fruit on the picture""" 
+	
+	def __init__(self, model_path="saved_models\model1_vgg16_architecture.json",
+				weights_path="saved_models\model1_vgg16_best1_weights.hdf5"):
 
-        self.model.load_weights(weights_path)
-        self.model.compile(loss="categorical_crossentropy", optimizer="adam", metrics=["accuracy"])
+		'''
+		Parameters:
+		model_path : json file path with the model to load.
+		path_weigths : hdf5 file path with weights to load.
+		'''
+		
+		with open(model_path, "r") as json_file:
+			loaded_model = json_file.read()
+		self.model = model_from_json(loaded_model)
         
-    def predict(self, image, return_probs=False):
-        """
-        Parameters:
-        image : ndarray of shape like (100, 100, 3)
-            Represents 3-channel picture.
-        
-        Returns:
-        predict : int, if return_probs == False
-                  ndarray of class probabilities, if return_probs == True
-        """
-        image = cv2.resize(image, (100, 100))
-        image = np.expand_dims(image, axis=0) / 255
+		self.model.load_weights(weights_path)
+			
+		self.model.compile(loss="categorical_crossentropy", optimizer="adam", metrics=["accuracy"])
 
-        if return_probs:
-            predict = self.model.predict(image)
-        else:
-            predict = np.argmax(self.model.predict(image))
-        
-        return predict
+ 
+
+	def predict(self, image, return_probs=False):
+		"""
+		Parameters:
+		image : ndarray of shape like (100, 100, 3)
+			Represents 3-channel picture.
+		
+		Returns:
+		predict : int, if return_probs == False
+				ndarray of class probabilities, if return_probs == True
+		"""
+
+		classes = ['Apple Red Yellow', 'Apple Golden 1', 'Avocado', 'Avocado ripe', 'Banana',
+				   'Cocos', 'Dates', 'Granadilla', 'Grape Pink', 'Grape White', 
+				   'Kiwi', 'Kumquats', 'Lemon', 'Lemon Meyer', 'Limes', 
+				   'Nectarine', 'Orange', 'Peach', 'Peach Flat', 'Apricot']
+				
+		image = cv2.resize(image, (100, 100))
+		
+		image = np.expand_dims(image, axis=0) / 255
+		
+		if return_probs:
+			predict = self.model.predict(image)
+		else:
+			predict = classes[np.argmax(self.model.predict(image))]
+		
+		return predict
+			
         
