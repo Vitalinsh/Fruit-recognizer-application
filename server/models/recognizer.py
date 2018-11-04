@@ -39,17 +39,39 @@ class FruitRecognizer():
 		classes = ['Apple Red Yellow', 'Apple Golden 1', 'Avocado', 'Avocado ripe', 'Banana',
 				   'Cocos', 'Dates', 'Granadilla', 'Grape Pink', 'Grape White', 
 				   'Kiwi', 'Kumquats', 'Lemon', 'Lemon Meyer', 'Limes', 
-				   'Nectarine', 'Orange', 'Peach', 'Peach Flat', 'Apricot']
-				
-		image = cv2.resize(image, (100, 100))
+				   'Nectarine', 'Orange', 'Peach', 'Peach Flat', 'Apricot']				
 		
-		image = np.expand_dims(image, axis=0) / 255
+		image, squared_img = self.img_preprocessing(image)
 		
 		if return_probs:
 			predict = self.model.predict(image)
 		else:
 			predict = classes[np.argmax(self.model.predict(image))]
 		
-		return predict
+		if squared_img or return_probs:
+			return predict
+		else:
+			return predict + "Image isn't square! Prediction may be incorrect!"
 			
-        
+			
+	def img_preprocessing(self, image):
+		'''
+		method to preprocess image for prediction.
+		
+		Parameters:
+		image : ndarray of shape (-, -, 3)
+		
+		Returns:
+		ready_img : ndarray of shape (1, 100, 100, 3)
+		squared_img : Boolean
+		'''
+		squared_img = image.shape[0] == image.shape[1]
+		image = cv2.resize(image, (100, 100))
+		image = np.expand_dims(image, axis=0)
+		image = image / 255
+		
+		return image, squared_img
+		
+		
+		
+		
