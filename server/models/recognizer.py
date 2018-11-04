@@ -4,9 +4,9 @@ import os
 from keras.models import model_from_json
 
 from keras.models import Sequential
-from keras.layers import Dense, Flatten, Dropout, Conv2D, MaxPooling2D, BatchNormalization
+from keras.layers import Dense, Flatten, Dropout, Conv2D, MaxPooling2D
 from keras.regularizers import l2
-from keras.applications import VGG16
+
 
 class FruitRecognizer():
 	"""Class for classification fruit on the picture""" 
@@ -22,25 +22,17 @@ class FruitRecognizer():
 		'''
 		if create_new_cnn:
 			np.random.seed(5)
-			vgg16_net = VGG16(weights='imagenet', 
-                include_top=False, 
-                input_shape=(100, 100, 3))
-				
-			vgg16_net.trainable = False 
-			
 			self.model = Sequential()
-
-			self.model.add(vgg16_net)
-			self.model.add(Flatten())
-			self.model.add(Dense(256, activation="relu", kernel_initializer="he_uniform", kernel_regularizer=l2(0.01)))
-			self.model.add(BatchNormalization())
-			self.model.add(Dropout(0.5))
-			self.model.add(Dense(128, activation="relu", kernel_initializer="he_uniform", kernel_regularizer=l2(0.01)))
-			self.model.add(BatchNormalization())
-			self.model.add(Dropout(0.5))
 			
-			self.model.add(Dense(20, activation="softmax", kernel_initializer="glorot_uniform", kernel_regularizer=l2(0.01)))
+			self.model.add(Conv2D(32, kernel_size=(3, 3), activation="relu", input_shape=(100, 100, 3)))
+			self.model.add(Conv2D(64, (3, 3), activation="relu"))
+			self.model.add(MaxPooling2D(pool_size=(2, 2)))
+			
+			self.model.add(Flatten())
+			self.model.add(Dense(128, activation="relu"))
+			self.model.add(Dropout(0.5))
 
+			self.model.add(Dense(20, activation="softmax", kernel_initializer="glorot_uniform", kernel_regularizer=l2(0.01)))
 			self.model.compile(loss='categorical_crossentropy',
 						optimizer="adam", 
 						metrics=['accuracy'])
