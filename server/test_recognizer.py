@@ -63,4 +63,7 @@ class RecognizerTest(unittest.TestCase):
         
         
 if __name__ == '__main__':
+	print("Current: ", os.listdir())
+	print("Models: ", os.listdir("models"))
+	print("Saved:", os.listdir("models/saved_models"))
 	unittest.main()

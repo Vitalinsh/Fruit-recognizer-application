@@ -1,5 +1,7 @@
 tensorflow
 opencv-python
+h5py
+json
 Keras==2.2.0
 Keras-Applications==1.0.2
 Keras-Preprocessing==1.0.1
