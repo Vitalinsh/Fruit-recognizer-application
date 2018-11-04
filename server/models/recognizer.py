@@ -15,7 +15,6 @@ class FruitRecognizer():
         model_path : json file path with the model to load.
         path_weigths : hdf5 file path with weights to load.
         """
-        K.clear_session()
 
         with open(model_path, "r") as json_file:
             loaded_model = json_file.read()
@@ -42,7 +41,6 @@ class FruitRecognizer():
 
         else:
             predict = np.argmax(self.model.predict(image))
-            K.clear_session()
         
         return predict
         

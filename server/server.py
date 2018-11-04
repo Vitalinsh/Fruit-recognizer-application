@@ -4,22 +4,17 @@ from flask import Flask, request, Response
 import jsonpickle
 import numpy as np
 import cv2
+import tensorflow as tf
+from models.recognizer import FruitRecognizer
 
-from src.models.recognizer import FruitRecognizer
-
-def getModelApi():
-    reco = FruitRecognizer(model_path="models\saved_models\model1_vgg16_architecture.json",
-                           weights_path="models\saved_models\model1_vgg16_best1_weights.hdf5")
-
-    def predict(image):
-        return reco.predict(image)
-
-    return predict
-
+global graph
+graph = tf.get_default_graph()
 
 version = subprocess.check_output(["git", "describe"]).strip()
 print(version)
-predict = getModelApi()
+
+reco = FruitRecognizer(model_path="models\saved_models\model1_vgg16_architecture.json",
+                       weights_path="models\saved_models\model1_vgg16_best1_weights.hdf5")
 
 app = Flask(__name__)
 
@@ -34,10 +29,8 @@ def test():
     image = np.asarray(bytearray(data), dtype="uint8")
     image = cv2.imdecode(image, cv2.IMREAD_COLOR)
 
-    reco = FruitRecognizer(model_path="models\saved_models\model1_vgg16_architecture.json",
-                           weights_path="models\saved_models\model1_vgg16_best1_weights.hdf5")
-
-    res = reco.predict(image)
+    with graph.as_default():
+     res = reco.predict(image)
 
     # build a response dict to send back to client
     response = {'message': 'Your fruit is {}'.format(res)}
