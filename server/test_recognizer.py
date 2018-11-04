@@ -3,7 +3,7 @@ import sys
 import os
 import numpy as np
 
-sys.path.append("D:\Study\Python\Fruit-recognizer-application\server\models")
+sys.path.append("models")
 import recognizer
  
  
@@ -19,4 +19,4 @@ class RecognizerTest(unittest.TestCase):
         
         
 if __name__ == '__main__':
-    unittest.main()
+	unittest.main()
