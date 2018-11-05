@@ -17,3 +17,16 @@ script:
 script:
   - pytest
   - flake8
+
+language: android
+jdk: oraclejdk8
+android:
+  components:
+    - tools
+    - platform-tools
+    - build-tools-28.0.3
+    - android-28
+    - extra
+
+script:
+    - "./gradlew clean build test lint"
