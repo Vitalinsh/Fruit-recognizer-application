@@ -3,6 +3,7 @@ os: Windows
 language: 
     - python
     - java
+    - android
 python:
   - "3.6"
 # command to install dependencies
@@ -15,14 +16,10 @@ install:
 # command to run tests
 script:
   - pytest
-  - gradle check
-
-# command to run tests
-script:
-  - pytest
   - flake8
+  - gradle check
+  - "./gradlew clean build test lint"
 
-language: android
 jdk: oraclejdk8
 android:
   components:
@@ -32,5 +29,3 @@ android:
     - android-28
     - extra
 
-script:
-    - "./gradlew clean build test lint"
