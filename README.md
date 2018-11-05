@@ -16,3 +16,12 @@ To do this use command in command line:
 4. Run server.py file to start the server
 
 5. Run testClient.py file to check the work of classificator. It send picture to server and print classification result.
+
+
+To run client you need:
+
+1. Android device that supports Android SDK 28 or higher
+2. Device with installed Gradle, Android SDK 28 ans JDK 8
+3. Build apk with executing "gradlew assembleDebug" from command line
+4. Install created .apk package on android device
+
