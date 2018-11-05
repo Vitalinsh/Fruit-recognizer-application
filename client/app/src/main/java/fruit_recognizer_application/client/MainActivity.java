@@ -15,7 +15,7 @@ import java.io.IOException;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final String BASE_URL = "www.com";
+    private static final String BASE_URL = "localhost:5000";
     static final String RESULT_KEY = "RESULT";
     private static final int REQUEST_IMAGE_CAPTURE = 0;
     private static final int REQUEST_IMAGE_PICK = 1;
@@ -25,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         TextView versionView = findViewById(R.id.versionView);
-        versionView.setText(BuildConfig.APP_VERSION);
+        versionView.setText(BuildConfig.VERSION_NAME);
         setContentView(R.layout.activity_main);
     }
 
@@ -57,7 +57,8 @@ public class MainActivity extends AppCompatActivity {
                 IOToast.show();
                 return;
             }
-            String result = new RequestSender(BASE_URL).requestRecognition("/api/recognize", fruitImage);
+            String result;
+            result = new RequestSender(BASE_URL).requestRecognition("/api/recognize", fruitImage);
             Intent showResult = new Intent(this, ResultActivity.class);
             showResult.putExtra(RESULT_KEY, result);
             startActivity(showResult);

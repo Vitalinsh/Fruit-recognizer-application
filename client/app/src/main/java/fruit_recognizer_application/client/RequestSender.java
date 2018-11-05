@@ -1,34 +1,50 @@
 package fruit_recognizer_application.client;
 
 import android.graphics.Bitmap;
-import com.loopj.android.http.*;
-import cz.msebera.android.httpclient.Header;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.ByteArrayInputStream;
+import com.google.gson.JsonParser;
+import okhttp3.*;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
 class RequestSender {
     private String base_url;
-    private AsyncHttpClient client;
+    private OkHttpClient client;
     static final String BAD_IMAGE_ERROR_MESSAGE = "Unable to proceed: bad image data";
 
     RequestSender(String base_url){
         this.base_url = base_url;
-        client = new AsyncHttpClient();
+        client = new OkHttpClient();
     }
 
-    String requestRecognition(String url, Bitmap image){
+    String requestRecognition(String url, Bitmap image) {
         byte[] imageData = bitmapToByteArray(makeBitmapSquare(image));
         if(imageData == null)
             return BAD_IMAGE_ERROR_MESSAGE;
 
-        RequestParams params = new RequestParams();
-        params.put("image", new ByteArrayInputStream(imageData));
-        ResponseHandler responseHandler = new ResponseHandler();
-        client.post(base_url + url, params, responseHandler);
-        return responseHandler.getStringResponse();
+        RequestBody body = new MultipartBody.Builder()
+                .setType(MultipartBody.FORM)
+                .addFormDataPart("image", "", RequestBody.create(MediaType.parse("image/*png"), imageData))
+                .build();
+        Request request = new Request.Builder()
+                .url(base_url + url)
+                .post(body)
+                .build();
+        Response response;
+        try {
+            response = client.newCall(request).execute();
+        } catch (IOException e) {
+            return "Server Unavailable";
+        }
+        try {
+            return response.body() != null
+                    ? new JsonParser().parse(response.body().string())
+                                        .getAsJsonObject()
+                                        .getAsJsonPrimitive("message")
+                                        .getAsString()
+                    : "Error " + response.code();
+        } catch (IOException e) {
+            return "Unable to read response";
+        }
     }
 
     static byte[] bitmapToByteArray(Bitmap bitmap){
@@ -41,6 +57,8 @@ class RequestSender {
     }
 
     static Bitmap makeBitmapSquare(Bitmap bitmap){
+        if(bitmap == null) return null;
+        if(bitmap.getHeight() == bitmap.getWidth()) return bitmap;
         if(bitmap.getWidth() > bitmap.getHeight())
             return Bitmap.createBitmap(bitmap,
                     bitmap.getWidth()/2 - bitmap.getHeight()/2,
@@ -53,27 +71,5 @@ class RequestSender {
                     bitmap.getHeight()/2 - bitmap.getWidth()/2,
                     bitmap.getWidth(),
                     bitmap.getWidth());
-    }
-}
-
-class ResponseHandler extends JsonHttpResponseHandler {
-    private String res = "";
-
-    @Override
-    public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-        try {
-            res = response.getString("message");
-        } catch (JSONException e) {
-            res = "Wrong response format";
-        }
-    }
-
-    @Override
-    public void onFailure(int statusCode, Header[] headers, Throwable e, JSONObject errorResponse) {
-        res = "Error " + statusCode;
-    }
-
-    String getStringResponse(){
-        return res;
     }
 }
