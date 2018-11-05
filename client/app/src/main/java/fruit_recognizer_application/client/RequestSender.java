@@ -20,7 +20,7 @@ class RequestSender {
     }
 
     String requestRecognition(String url, Bitmap image){
-        byte[] imageData = bitmapToByteArray(image);
+        byte[] imageData = bitmapToByteArray(makeBitmapSquare(image));
         if(imageData == null)
             return BAD_IMAGE_ERROR_MESSAGE;
 
@@ -38,6 +38,21 @@ class RequestSender {
             bitmapdata = stream.toByteArray();
 
         return bitmapdata;
+    }
+
+    static Bitmap makeBitmapSquare(Bitmap bitmap){
+        if(bitmap.getWidth() > bitmap.getHeight())
+            return Bitmap.createBitmap(bitmap,
+                    bitmap.getWidth()/2 - bitmap.getHeight()/2,
+                    0,
+                    bitmap.getHeight(),
+                    bitmap.getHeight());
+        else
+            return Bitmap.createBitmap(bitmap,
+                    0,
+                    bitmap.getHeight()/2 - bitmap.getWidth()/2,
+                    bitmap.getWidth(),
+                    bitmap.getWidth());
     }
 }
 
