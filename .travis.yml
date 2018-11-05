@@ -1,0 +1,19 @@
+os: Windows
+
+language: python
+python:
+  - "3.6"
+# command to install dependencies
+install:
+  - pip install -r requirements.txt
+  - pip install pylint_runner
+  - pip install flake8
+
+# command to run tests
+script:
+  - pytest
+
+# command to run tests
+script:
+  - pytest
+  - flake8
