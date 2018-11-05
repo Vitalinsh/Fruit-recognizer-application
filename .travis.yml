@@ -1,6 +1,8 @@
 os: Windows
 
-language: python
+language: 
+    - python
+    - java
 python:
   - "3.6"
 # command to install dependencies
@@ -8,10 +10,12 @@ install:
   - pip install -r requirements.txt
   - pip install pylint_runner
   - pip install flake8
+  - gradle assemble
 
 # command to run tests
 script:
   - pytest
+  - gradle check
 
 # command to run tests
 script:
