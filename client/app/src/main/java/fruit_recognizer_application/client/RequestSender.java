@@ -36,12 +36,12 @@ class RequestSender {
             return "Server Unavailable";
         }
         try {
-            return response.body() != null
-                    ? new JsonParser().parse(response.body().string())
+            if(response.code() != 200)
+                return "Error " + response.code();
+            return response.body() != null ? new JsonParser().parse(response.body().string())
                                         .getAsJsonObject()
                                         .getAsJsonPrimitive("message")
-                                        .getAsString()
-                    : "Error " + response.code();
+                                        .getAsString(): null;
         } catch (IOException e) {
             return "Unable to read response";
         }
@@ -58,8 +58,8 @@ class RequestSender {
 
     static Bitmap makeBitmapSquare(Bitmap bitmap){
         if(bitmap == null) return null;
-        if(bitmap.getHeight() == bitmap.getWidth()) return bitmap;
-        if(bitmap.getWidth() > bitmap.getHeight())
+        else if(bitmap.getHeight() == bitmap.getWidth()) return bitmap;
+        else if(bitmap.getWidth() > bitmap.getHeight())
             return Bitmap.createBitmap(bitmap,
                     bitmap.getWidth()/2 - bitmap.getHeight()/2,
                     0,

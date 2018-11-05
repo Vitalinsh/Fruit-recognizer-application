@@ -47,7 +47,12 @@ public class RequestSenderTest {
     //Nata
     @Test
     public void requestRecognition_onServerFault(){
-
+        MockWebServer server = new MockWebServer();
+        MockResponse response400 = new MockResponse();
+        response400.setResponseCode(400);
+        server.enqueue(response400);
+        requestSender = new RequestSender(server.url("/").toString());
+        assertEquals("Error 400", requestSender.requestRecognition("", correctBitmap));
     }
 
     @Test
@@ -64,21 +69,20 @@ public class RequestSenderTest {
     public void makeBitmapSquare_Correct(){
         Bitmap bitmap = Bitmap.createBitmap(50, 100, Bitmap.Config.ARGB_8888);
         Bitmap square = RequestSender.makeBitmapSquare(bitmap);
-        assertEquals(square.getHeight(), 50);
-        assertEquals(square.getWidth(), 50);
+        assertEquals(50, square.getHeight());
+        assertEquals(50, square.getWidth());
         bitmap = Bitmap.createBitmap(100, 50, Bitmap.Config.ARGB_8888);
         square = RequestSender.makeBitmapSquare(bitmap);
-        assertEquals(square.getHeight(), 50);
-        assertEquals(square.getWidth(), 50);
+        assertEquals(50, square.getHeight());
+        assertEquals(50, square.getWidth());
         bitmap = Bitmap.createBitmap(50, 50, Bitmap.Config.ARGB_8888);
         square = RequestSender.makeBitmapSquare(bitmap);
-        assertEquals(square.getHeight(), 50);
-        assertEquals(square.getWidth(), 50);
+        assertEquals(50, square.getHeight());
+        assertEquals(50, square.getWidth());
     }
 
-    //Nata
     @Test
     public void makeBitmapSquare_Failure(){
-
+        assertNull(RequestSender.makeBitmapSquare(null));
     }
 }

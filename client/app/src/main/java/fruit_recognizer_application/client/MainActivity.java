@@ -22,6 +22,8 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Bitmap bitmap = Bitmap.createBitmap(50, 100, Bitmap.Config.ARGB_8888);
+        assert bitmap != null;
         super.onCreate(savedInstanceState);
 
         TextView versionView = findViewById(R.id.versionView);
