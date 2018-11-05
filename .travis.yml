@@ -1,6 +1,6 @@
 os: Windows
 
-language: python
+language: python, java
 python:
   - "3.6"
 # command to install dependencies

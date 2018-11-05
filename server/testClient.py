@@ -14,4 +14,5 @@ with open('lena.jpg','rb') as f:
     response = requests.post(test_url, files={'image': f})
 
 print (json.loads(response.text))
+input("Press any key to exit...")
 
