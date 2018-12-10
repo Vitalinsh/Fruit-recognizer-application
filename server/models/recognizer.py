@@ -11,8 +11,8 @@ from keras.regularizers import l2
 class FruitRecognizer():
 	"""Class for classification fruit on the picture""" 
 	
-	def __init__(self, model_path="saved_models\model1_vgg16_architecture.json",
-				weights_path="saved_models\model1_vgg16_best1_weights.hdf5",
+	def __init__(self, model_path="saved_models/model1_vgg16_architecture.json",
+				weights_path="saved_models/model1_vgg16_best1_weights.hdf5",
 				create_new_cnn=False):
 
 		'''
