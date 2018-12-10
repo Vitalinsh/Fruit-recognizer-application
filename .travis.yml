@@ -17,6 +17,13 @@ install:
   - gradle assemble
   - docker build -t recognitron .
 
+services:
+  - docker
+
+before_install:
+  - docker build -t recognitron .
+  - docker run -p 4000:80 recognitron
+
 # command to run tests
 script:
   - pytest
