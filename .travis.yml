@@ -6,12 +6,16 @@ language:
     - android
 python:
   - "3.6"
+services:
+ - docker
+
 # command to install dependencies
 install:
   - pip install -r requirements.txt
   - pip install pylint_runner
   - pip install flake8
   - gradle assemble
+  - docker build -t recognitron .
 
 # command to run tests
 script:
