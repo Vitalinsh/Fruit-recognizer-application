@@ -1,6 +1,4 @@
 os: Windows
-matrix:
-  include:
   language:
       - python
     python:
@@ -16,26 +14,10 @@ matrix:
 
   before_install:
     - docker build -t recognitron .
-    - docker run -d -p 4000:80 recognitron
 
   # command to run tests
   script:
     - pytest
     - flake8
-
-  - language: android
-    jdk: oraclejdk8
-
-    services:
-   - docker
-    android:
-     components:
-       - tools
-       - platform-tools
-       - build-tools-28.0.3
-       - android-28
-       - extra
-     script:
-       - ./gradlew clean build test lint
-       - gradle check
+    - docker run -d -p 4000:80 recognitron
 
