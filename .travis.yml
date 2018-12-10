@@ -1,21 +1,36 @@
-language:
-   - python
-python:
-   - "3.6"
-services:
-   - docker
+matrix:
+  include:
+      language:
+         - python
+        python:
+           - "3.6"
+        services:
+           - docker
 
-before_install:
-  - docker build -t recognitron .
-  # command to install dependencies
-install:
-   - pip install -r requirements.txt
-   - pip install pylint_runner
-   - pip install flake8
-   - gradle assemble
-  # command to run tests
-script:
-  - pytest
-  - flake8
-  - docker run -d -p 4000:80 recognitron
+        before_install:
+          - docker build -t recognitron .
+          # command to install dependencies
+        install:
+           - pip install -r requirements.txt
+           - pip install pylint_runner
+           - pip install flake8
+            # command to run tests
+        script:
+          - pytest
+          - flake8
+          - docker run -d -p 4000:80 recognitron
+
+      - language: android
+        jdk: oraclejdk8
+        android:
+          components:
+              - tools
+              - platform-tools
+              - build-tools-28.0.3
+              - android-28
+              - extra
+        before_script:
+          - cd android/AppName
+        script:
+          - ./gradlew build connectedCheck
 
