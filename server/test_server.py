@@ -20,7 +20,7 @@ class TestStringMethods(unittest.TestCase):
         mockFile.read.return_value = '010181312390'
         files = {"image" : mockFile}
         result = getImageByteArray(files)
-        
+
         self.assertTrue(result[0])
         self.assertEqual(result[1],'010181312390')
 
