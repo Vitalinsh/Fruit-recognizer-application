@@ -33,8 +33,8 @@ matrix:
            - docker
         before_install:
           - cd client
-          - docker build -t recognitronAndroidApp .
+          - docker build -t recognitronandroidapp .
         script:
           - ./gradlew build connectedCheck
-          #- docker run — rm -v “$PWD”:/home/gradle/ -w /home/gradle/Recognitron/android-build:part1 gradle -PdisablePreDex RecognitronApp
+          - docker run — rm -v “$PWD”:/home/gradle/ -w /home/gradle/Recognitron/android-build:part1 gradle -PdisablePreDex RecognitronApp
 
