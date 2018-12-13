@@ -1,7 +1,8 @@
 import unittest
+from unittest.mock import MagicMock
 
 from RequestValidator import getImageByteArray
-from unittest.mock import MagicMock
+
 
 class TestStringMethods(unittest.TestCase):
 
@@ -23,6 +24,7 @@ class TestStringMethods(unittest.TestCase):
 
         self.assertTrue(result[0])
         self.assertEqual(result[1],'010181312390')
+
 
 if __name__ == '__main__':
     unittest.main()

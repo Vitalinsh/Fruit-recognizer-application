@@ -1,1 +1,1 @@
-1. Model 1 vgg16 - train acc = 1.0; valid acc = 0.991422; test acc = 0.992039
+1. Model 1 vgg16 - train acc = 1.0; valid acc = 0.991422; test acc = 0.992039  - 20 classes

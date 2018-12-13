@@ -1,6 +1,6 @@
-import requests
 import json
-import cv2
+
+import requests
 
 addr = 'http://localhost:5000'
 
@@ -10,9 +10,10 @@ test_url = addr + '/api/recognize'
 content_type = 'image/jpeg'
 headers = {'content-type': content_type}
 
-with open('lena.jpg','rb') as f:
+with open('lena.jpg', 'rb') as f:
     response = requests.post(test_url, files={'image': f})
 
-print (json.loads(response.text))
+print(json.loads(response.text))
 input("Press any key to exit...")
+
 

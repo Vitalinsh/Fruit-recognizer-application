@@ -8,7 +8,9 @@ import cv2
 import tensorflow as tf
 
 from models.recognizer import FruitRecognizer
-from RequestValidator import getImageByteArray
+
+global graph
+graph = tf.get_default_graph()
 
 base_dir = os.path.abspath(os.path.dirname(__file__))
 model_path = os.path.join(base_dir, 'models', "saved_models",
@@ -16,39 +18,31 @@ model_path = os.path.join(base_dir, 'models', "saved_models",
 weights_path = os.path.join(base_dir, 'models', "saved_models",
                             "model1_vgg16_best1_weights.hdf5")
 
-global graph
-graph = tf.get_default_graph()
-
 version = subprocess.check_output(["git", "describe"]).strip()
 print(version)
 
 reco = FruitRecognizer(model_path=model_path,
                        weights_path=weights_path)
-
 app = Flask(__name__)
 
 
 # route http posts to this method
-@app.route('/api/recognize', methods=['POST'])
+@app.route('/api/recognize_fruit', methods=['POST'])
 def test():
+    r = request
+    # convert string of image data to uint8
+    nparr = np.fromstring(r.data, np.uint8)
 
-    fileReceived = getImageByteArray(request.files)
+    # decode image
+    img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
 
-    if not (fileReceived[0]):
-        response = {'message': 'No file received'}
-        response_pickled = jsonpickle.encode(response)
-        return Response(response=response_pickled, status=200,
-                        mimetype="application/json")
-
-    image = np.asarray(bytearray(fileReceived[1]), dtype="uint8")
-    image = cv2.imdecode(image, cv2.IMREAD_COLOR)
-
+    # do some fancy processing here....
     with graph.as_default():
-        res = reco.predict(image)
+        res = reco.predict(img)
 
     # build a response dict to send back to client
     response = {'message': 'Your fruit is {}'.format(res)}
-
+    # encode response using jsonpickle
     response_pickled = jsonpickle.encode(response)
 
     return Response(response=response_pickled, status=200,
@@ -56,5 +50,5 @@ def test():
 
 
 # start flask app
-# app.run(host='0.0.0.0', port=5000, debug=False)
-app.run(host='0.0.0.0', port=5000, debug=False, threaded=False)
+app.run(host="0.0.0.0", port=5000, debug=False)
+# app.run(host='0.0.0.0', debug=False, threaded=False)
