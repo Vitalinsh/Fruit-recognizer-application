@@ -19,8 +19,8 @@ weights_path = os.path.join(base_dir, 'models', "saved_models",
 global graph
 graph = tf.get_default_graph()
 
-version = subprocess.check_output(["git", "describe"]).strip()
-print(version)
+# version = subprocess.check_output(["git", "describe"]).strip()
+# print(version)
 
 reco = FruitRecognizer(model_path=model_path,
                        weights_path=weights_path)
@@ -33,8 +33,7 @@ app = Flask(__name__)
 def test():
 
     fileReceived = getImageByteArray(request.files)
-
-    if not (fileReceived[0]):
+    if not fileReceived[0]:
         response = {'message': 'No file received'}
         response_pickled = jsonpickle.encode(response)
         return Response(response=response_pickled, status=200,
@@ -42,19 +41,28 @@ def test():
 
     image = np.asarray(bytearray(fileReceived[1]), dtype="uint8")
     image = cv2.imdecode(image, cv2.IMREAD_COLOR)
-
     with graph.as_default():
         res = reco.predict(image)
 
     # build a response dict to send back to client
     response = {'message': 'Your fruit is {}'.format(res)}
-
     response_pickled = jsonpickle.encode(response)
-
     return Response(response=response_pickled, status=200,
                     mimetype="application/json")
 
 
-# start flask app
-# app.run(host='0.0.0.0', port=5000, debug=False)
-app.run(host='0.0.0.0', port=5000, debug=False, threaded=False)
+def shutdown_server():
+    func = request.environ.get('werkzeug.server.shutdown')
+    if func is None:
+        raise RuntimeError('Not running with the Werkzeug Server')
+    func()
+
+
+@app.route('/shutdown', methods=['POST'])
+def shutdown():
+    shutdown_server()
+    return 'Server shutting down...'
+
+
+if __name__ == "__main__":
+    app.run(host='0.0.0.0', port=5000, debug=False, threaded=False)
