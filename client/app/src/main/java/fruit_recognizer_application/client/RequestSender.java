@@ -1,75 +1,72 @@
 package fruit_recognizer_application.client;
 
-import android.graphics.Bitmap;
-import com.google.gson.JsonParser;
 import okhttp3.*;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 class RequestSender {
     private String base_url;
     private OkHttpClient client;
-    static final String BAD_IMAGE_ERROR_MESSAGE = "Unable to proceed: bad image data";
+
+    private static final String BAD_DATA_MSG = "Unable to proceed: bad data";
+    private static final String SERVER_UNAVAILABLE_MSG = "Server Unavailable";
+    private static final String BAD_RESPONSE_MSG = "Bad response format";
 
     RequestSender(String base_url){
         this.base_url = base_url;
         client = new OkHttpClient();
     }
 
-    String requestRecognition(String url, Bitmap image) {
-        byte[] imageData = bitmapToByteArray(makeBitmapSquare(image));
-        if(imageData == null)
-            return BAD_IMAGE_ERROR_MESSAGE;
+    PostResponse postWithByteData(
+            String url, byte[] bytes, String name, String filename, String mediaType
+    ) {
+        if (bytes == null)
+            return new PostResponse(BAD_DATA_MSG, false);
 
         RequestBody body = new MultipartBody.Builder()
                 .setType(MultipartBody.FORM)
-                .addFormDataPart("image", "", RequestBody.create(MediaType.parse("image/*png"), imageData))
+                .addFormDataPart(name,filename, RequestBody.create(MediaType.parse(mediaType), bytes))
                 .build();
-        Request request = new Request.Builder()
-                .url(base_url + url)
-                .post(body)
-                .build();
+
         Response response;
         try {
-            response = client.newCall(request).execute();
+            String fullUrl = base_url + url;
+            response = client.newCall(
+                    new Request.Builder().url(fullUrl).post(body).build()
+            ).execute();
         } catch (IOException e) {
-            return "Server Unavailable";
+            return new PostResponse(SERVER_UNAVAILABLE_MSG, false);
         }
+
         try {
-            return response.body() != null
-                    ? new JsonParser().parse(response.body().string())
-                                        .getAsJsonObject()
-                                        .getAsJsonPrimitive("message")
-                                        .getAsString()
-                    : "Error " + response.code();
+            if (response.code() != 200) {
+                return new PostResponse("Error " + response.code(), false);
+            } else {
+                if (response.body() != null)
+                    return new PostResponse(response.body().string(), true);
+                else
+                    return new PostResponse(BAD_RESPONSE_MSG, false);
+            }
         } catch (IOException e) {
-            return "Unable to read response";
+            return new PostResponse(BAD_RESPONSE_MSG, false);
         }
     }
 
-    static byte[] bitmapToByteArray(Bitmap bitmap){
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        byte[] bitmapdata = null;
-        if(bitmap != null && bitmap.compress(Bitmap.CompressFormat.PNG, 0, stream))
-            bitmapdata = stream.toByteArray();
+    class PostResponse {
+        private String message;
+        private boolean isGood;
 
-        return bitmapdata;
+        PostResponse(String message, boolean isGood) {
+            this.message = message;
+            this.isGood = isGood;
+        }
+
+        public String getMessage() {
+            return message;
+        }
+
+        boolean isGood() {
+            return isGood;
+        }
     }
 
-    static Bitmap makeBitmapSquare(Bitmap bitmap){
-        if(bitmap == null) return null;
-        if(bitmap.getHeight() == bitmap.getWidth()) return bitmap;
-        if(bitmap.getWidth() > bitmap.getHeight())
-            return Bitmap.createBitmap(bitmap,
-                    bitmap.getWidth()/2 - bitmap.getHeight()/2,
-                    0,
-                    bitmap.getHeight(),
-                    bitmap.getHeight());
-        else
-            return Bitmap.createBitmap(bitmap,
-                    0,
-                    bitmap.getHeight()/2 - bitmap.getWidth()/2,
-                    bitmap.getWidth(),
-                    bitmap.getWidth());
-    }
 }
