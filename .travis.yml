@@ -1,39 +1,41 @@
 jobs:
   include:
-    - stage: test
-      lnguage: python
-      python:
-      - "3.6"
-      services:
-      - docker
-      before_install:
-      - docker build -t recognitron .
-      # command to install dependencies
-      install:
-      - pip install -r requirements.txt
-      - pip install pylint_runner
-      - pip install flake8
-      # command to run tests
-      script:
-      - pytest
-      - flake8
-      - docker run -d -p 4000:80 recognitron
+      - stage: test
+        language: python
+        python:
+        - "3.6"
+        services:
+        - docker
 
-    - stage: test
-      language: android
-      jdk: oraclejdk8
-      android:
-      components:
-          - tools
-          - platform-tools
-          - build-tools-28.0.3
-          - android-28
-          - extra
-      services:
-      - docker
-      before_install:
-      - cd client
-      - docker build -t recognitronandroidapp .
-      script:
-      - ./gradlew build connectedCheck
-      - docker run — rm -v “$PWD”:/home/gradle/ -w /home/gradle/Recognitron/android-build:part1 gradle -PdisablePreDex RecognitronApp
+        before_install:
+        - docker build -t recognitron .
+        # command to install dependencies
+        install:
+        - pip install -r requirements.txt
+        - pip install pylint_runner
+        - pip install flake8
+            # command to run tests
+        script:
+        - pytest
+        - flake8
+        - docker run -d -p 4000:80 recognitron
+
+      - stage: test
+        language: android
+        jdk: oraclejdk8
+        android:
+        components:
+            - tools
+            - platform-tools
+            - build-tools-28.0.3
+            - android-28
+            - extra
+        services:
+        - docker
+        before_install:
+        - cd client
+        - docker build -t recognitronandroidapp .
+        script:
+        - ./gradlew build connectedCheck
+        - docker run — rm -v “$PWD”:/home/gradle/ -w /home/gradle/Recognitron/android-build:part1 gradle -PdisablePreDex RecognitronApp
+
