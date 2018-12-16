@@ -13,11 +13,11 @@ jobs:
         install:
         - pip install -r requirements.txt
         - pip install pylint_runner
-        - pip install flake8
+        # - pip install flake8
             # command to run tests
         script:
         - pytest
-        - flake8
+        # - flake8
         - docker run -d -p 4000:80 recognitron
 
       - stage: test
