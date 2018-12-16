@@ -105,6 +105,7 @@ venv.bak/
 
 # Pycharm
 .idea/
+.idea
 
 logs/
 dataset/
