@@ -1,7 +1,6 @@
-package fruit_recognizer_application.client;
+package com.recognitron.fruitrecognizer.client;
 
 import okhttp3.*;
-import java.io.IOException;
 
 class RequestSender {
     private String base_url;
@@ -19,13 +18,17 @@ class RequestSender {
     PostResponse postWithByteData(
             String url, byte[] bytes, String name, String filename, String mediaType
     ) {
-        if (bytes == null)
+        return new PostResponse("{\"message\":\"this is banana\"}", true);
+        /*
+        if (bytes == null || base_url == null || url == null || name == null || filename == null
+                || mediaType == null || HttpUrl.parse(base_url + url) == null) {
             return new PostResponse(BAD_DATA_MSG, false);
+        }
 
         RequestBody body = new MultipartBody.Builder()
-                .setType(MultipartBody.FORM)
-                .addFormDataPart(name,filename, RequestBody.create(MediaType.parse(mediaType), bytes))
-                .build();
+                    .setType(MultipartBody.FORM)
+                    .addFormDataPart(name, filename, RequestBody.create(MediaType.parse(mediaType), bytes))
+                    .build();
 
         Response response;
         try {
@@ -49,23 +52,24 @@ class RequestSender {
         } catch (IOException e) {
             return new PostResponse(BAD_RESPONSE_MSG, false);
         }
+        */
     }
 
     class PostResponse {
         private String message;
-        private boolean isGood;
+        private boolean isReadable;
 
-        PostResponse(String message, boolean isGood) {
+        PostResponse(String message, boolean readable) {
             this.message = message;
-            this.isGood = isGood;
+            this.isReadable = readable;
         }
 
         public String getMessage() {
             return message;
         }
 
-        boolean isGood() {
-            return isGood;
+        boolean isReadable() {
+            return isReadable;
         }
     }
 

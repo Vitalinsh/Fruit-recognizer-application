@@ -1,5 +1,6 @@
-package fruit_recognizer_application.client;
+package com.recognitron.fruitrecognizer.client;
 
+import android.graphics.Bitmap;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -14,13 +15,6 @@ public class ResultActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_result);
-        ImageView imageView = findViewById(R.id.imageView);
-
-        try {
-            imageView.setImageBitmap(BitmapHolder.getInstance().getBlurredBitmap(this));
-        } catch (Exception e) {
-            imageView.setImageBitmap(BitmapHolder.getInstance().getBitmap());
-        }
     }
 
     @Override
@@ -37,7 +31,7 @@ public class ResultActivity extends AppCompatActivity {
                         );
 
         String text;
-        if (!response.isGood()) {
+        if (!response.isReadable()) {
             text = response.getMessage();
         } else {
             try {
@@ -49,6 +43,11 @@ public class ResultActivity extends AppCompatActivity {
 
         TextView textView = findViewById(R.id.textResult);
         textView.setText(text);
+
+        ImageView imageView = findViewById(R.id.imageView);
+        Bitmap blurredBitmap = BitmapHolder.getInstance().getBlurredBitmap();
+        if(blurredBitmap != null && response.isReadable())
+            imageView.setImageBitmap(blurredBitmap);
     }
 
     public void reportWrongRecognition(View view) {}

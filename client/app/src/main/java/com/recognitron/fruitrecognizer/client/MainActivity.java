@@ -1,4 +1,4 @@
-package fruit_recognizer_application.client;
+package com.recognitron.fruitrecognizer.client;
 
 import android.Manifest;
 import android.content.Intent;
@@ -15,7 +15,6 @@ import android.widget.Toast;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -86,14 +85,7 @@ public class MainActivity extends AppCompatActivity {
                     return;
                 }
             }
-
-            try {
-                BitmapHolder.getInstance().setBitmap(fruitBitmap, this);
-            } catch (Exception e) {
-                Toast badImageData = Toast.makeText(this, "Unable to use image", Toast.LENGTH_SHORT);
-                badImageData.show();
-                return;
-            }
+            BitmapHolder.getInstance().setBitmap(fruitBitmap);
 
             Intent showResultIntent = new Intent(this, ResultActivity.class);
             startActivity(showResultIntent);

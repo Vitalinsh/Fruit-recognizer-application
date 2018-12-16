@@ -1,4 +1,4 @@
-package fruit_recognizer_application.client;
+package com.recognitron.fruitrecognizer.client;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
-        assertEquals("fruit_recognizer_application.client", appContext.getPackageName());
+        assertEquals("com.recognitron.fruitrecognizer.client", appContext.getPackageName());
     }
 }
