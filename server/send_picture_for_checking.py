@@ -17,8 +17,8 @@ print(json.loads(response.text))
 print(type(json.loads(response.text)))
 input("Press any key to exit...")
 
-r = requests.post("http://localhost:5000/shutdown")
-print(r)
-print(r.text)
+# r = requests.post("http://localhost:5000/shutdown")
+# print(r)
+# print(r.text)
 
 

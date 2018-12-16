@@ -1,6 +1,11 @@
+import sys
+
 import unittest
 from unittest.mock import MagicMock
 
+from config_tests import config
+sys.path.append(config.project_dir)
+sys.path.append(config.server_dir)
 from RequestValidator import getImageByteArray
 
 

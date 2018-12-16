@@ -1,18 +1,24 @@
+import os
+
 import numpy as np
 import cv2
-
 from keras.models import model_from_json
 from keras.models import Sequential
 from keras.layers import Dense, Flatten, Dropout, Conv2D, MaxPooling2D
 from keras.regularizers import l2
 
+package_dir = os.path.abspath(os.path.dirname(__file__))
+saved_dir = os.path.join(package_dir, "saved_models")
+model_path = os.path.join(saved_dir, "model1_vgg16_architecture.json")
+weights_path = os.path.join(saved_dir, "model1_vgg16_best1_weights.hdf5")
 
-class FruitRecognizer():
+
+class FruitRecognizer:
     """Class for classification fruit on the picture"""
 
     def __init__(self,
-                 model_path="saved_models/model1_vgg16_architecture.json",
-                 weights_path="saved_models/model1_vgg16_best1_weights.hdf5",
+                 model_path=model_path,
+                 weights_path=weights_path,
                  create_new_cnn=False):
         """
         Parameters:

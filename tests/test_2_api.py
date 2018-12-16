@@ -1,8 +1,11 @@
 import json
+import sys
 
 from pytest_bdd import scenario, given, when, then
 import pytest
 
+from config_tests import config
+sys.path.append(config.server_dir)
 from server import app
 
 status, result = "", ""

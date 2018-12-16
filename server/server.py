@@ -1,5 +1,5 @@
 import subprocess
-import os
+import sys
 
 from flask import Flask, request, Response
 import jsonpickle
@@ -7,24 +7,18 @@ import numpy as np
 import cv2
 import tensorflow as tf
 
+from config_server import config
+sys.path.append(config.project_dir)
 from models.recognizer import FruitRecognizer
 from RequestValidator import getImageByteArray
-
-base_dir = os.path.abspath(os.path.dirname(__file__))
-model_path = os.path.join(base_dir, 'models', "saved_models",
-                          "model1_vgg16_architecture.json")
-weights_path = os.path.join(base_dir, 'models', "saved_models",
-                            "model1_vgg16_best1_weights.hdf5")
 
 global graph
 graph = tf.get_default_graph()
 
-# version = subprocess.check_output(["git", "describe"]).strip()
-# print(version)
+version = subprocess.check_output(["git", "describe"]).strip()
+print(version)
 
-reco = FruitRecognizer(model_path=model_path,
-                       weights_path=weights_path)
-
+reco = FruitRecognizer()
 app = Flask(__name__)
 
 
