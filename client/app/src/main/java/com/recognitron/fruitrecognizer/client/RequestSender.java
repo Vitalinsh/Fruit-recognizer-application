@@ -1,6 +1,7 @@
 package com.recognitron.fruitrecognizer.client;
 
 import okhttp3.*;
+import java.io.IOException;
 
 class RequestSender {
     private String base_url;
@@ -18,8 +19,7 @@ class RequestSender {
     PostResponse postWithByteData(
             String url, byte[] bytes, String name, String filename, String mediaType
     ) {
-        return new PostResponse("{\"message\":\"this is banana\"}", true);
-        /*
+
         if (bytes == null || base_url == null || url == null || name == null || filename == null
                 || mediaType == null || HttpUrl.parse(base_url + url) == null) {
             return new PostResponse(BAD_DATA_MSG, false);
@@ -52,7 +52,7 @@ class RequestSender {
         } catch (IOException e) {
             return new PostResponse(BAD_RESPONSE_MSG, false);
         }
-        */
+
     }
 
     class PostResponse {
