@@ -32,9 +32,19 @@ jobs:
             #- extra
         services:
         - docker
+
+        after_failure:
+        # dump the last 2000 lines of our build, and hope the error is in that!
+        - tail --lines=2000 build.log
+
+        after_success:
+        # Log that the build worked, because we all need some good news
+        - echo "Buildroot build succeeded, binary in ./build"
+
         before_install:
         - cd client
         - docker build -t recognitronandroidapp .
+
         script:
         # - ./gradlew build connectedCheck
         - docker run — rm -v “$PWD”:/home/gradle/ -w /home/gradle/Recognitron/android-build:part1 gradle -PdisablePreDex RecognitronApp
