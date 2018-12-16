@@ -47,5 +47,5 @@ jobs:
 
         script:
         # - ./gradlew build connectedCheck
-        - docker run --rm -v “$PWD”:/home/gradle/ -w /home/gradle/Recognitron/android-build:part1 gradle -PdisablePreDex RecognitronApp
+        - docker run --rm -v "$PWD":/home/gradle/ -w /home/gradle/Recognitron/android-build:part1 gradle -PdisablePreDex RecognitronApp
 
