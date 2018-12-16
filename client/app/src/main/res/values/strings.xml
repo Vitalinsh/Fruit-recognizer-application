@@ -1,3 +1,10 @@
 <resources>
-    <string name="app_name">Fruit recognizer</string>
+    <string name="app_name">Fruit Recognizer</string>
+
+    <string name="processing_text">Processing…</string>
+    <string name="button_title">FRUIT\nRECOGNIZER</string>
+    <string name="take_photo">MAKE PHOTO\nWITH CAMERA</string>
+    <string name="pick_photo">LOAD PHOTO\nFROM GALLERY</string>
+    <string name="camera_icon">Camera icon</string>
+    <string name="gallery_icon">Gallery icon</string>
 </resources>
