@@ -103,7 +103,10 @@ venv.bak/
 # mypy
 .mypy_cache/
 
+# Pycharm
+.idea
 
 logs/
 dataset/
 tb_logs/
+temp/

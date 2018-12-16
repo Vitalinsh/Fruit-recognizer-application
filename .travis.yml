@@ -1,36 +1,41 @@
-os: Windows
+jobs:
+  include:
+      - stage: test
+        language: python
+        python:
+        - "3.6"
+        services:
+        - docker
 
-language: 
-    - python
-    - java
-python:
-  - "3.6"
-# command to install dependencies
-install:
-  - pip install -r requirements.txt
-  - pip install pylint_runner
-  - pip install flake8
-  - gradle assemble
+        before_install:
+        - docker build -t recognitron .
+        # command to install dependencies
+        install:
+        - pip install -r requirements.txt
+        - pip install pylint_runner
+        # - pip install flake8
+            # command to run tests
+        script:
+        - pytest
+        # - flake8
+        - docker run -d -p 4000:80 recognitron
 
-# command to run tests
-script:
-  - pytest
-  - gradle check
+      - stage: test
+        language: android
+        jdk: oraclejdk8
+        android:
+        components:
+            - tools
+            - platform-tools
+            - build-tools-28.0.3
+            - android-28
+            - extra
+        services:
+        - docker
+        before_install:
+        - cd client
+        - docker build -t recognitronandroidapp .
+        script:
+        - ./gradlew build connectedCheck
+        - docker run — rm -v “$PWD”:/home/gradle/ -w /home/gradle/Recognitron/android-build:part1 gradle -PdisablePreDex RecognitronApp
 
-# command to run tests
-script:
-  - pytest
-  - flake8
-
-language: android
-jdk: oraclejdk8
-android:
-  components:
-    - tools
-    - platform-tools
-    - build-tools-28.0.3
-    - android-28
-    - extra
-
-script:
-    - "./gradlew clean build test lint"
