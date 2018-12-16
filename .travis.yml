@@ -43,7 +43,7 @@ jobs:
 
         before_install:
         - cd client
-        - docker build -t recognitronandroidapp .
+        - docker build -q -t recognitronandroidapp .
 
         script:
         # - ./gradlew build connectedCheck
