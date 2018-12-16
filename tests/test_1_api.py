@@ -1,5 +1,6 @@
 import json
 import sys
+import os
 
 from pytest_bdd import scenario, given, when, then
 import pytest
@@ -19,7 +20,8 @@ def app_server():
 @pytest.fixture
 def picture_path():
     picture_name = "granadilla.jpg"
-    return picture_name
+    picture_dir = os.path.join(config.tests_dir, picture_name)
+    return picture_dir
 
 
 @scenario("api.feature", "Recognize a fruit")
