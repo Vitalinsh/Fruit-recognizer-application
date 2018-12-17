@@ -32,6 +32,11 @@ jobs:
             #- extra
         services:
         - docker
+        
+        addons:
+            apt:
+                packages:
+                - docker-ce
 
         before_install:
         - cd client
