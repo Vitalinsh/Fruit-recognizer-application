@@ -18,10 +18,23 @@ To do this use command in command line:
 5. Run testClient.py file to check the work of classificator. It send picture to server and print classification result.
 
 
-To run client you need:
+To create Android Debug APK:
 
-1. Android device that supports Android SDK 28 or higher
-2. Device with installed Gradle, Android SDK 28 ans JDK 8
-3. Build apk with executing "gradlew assembleDebug" from command line
-4. Install created .apk package on android device
+1. Using Docker (NOTE: needs quite a lot of time and stable internet connection to build APK, although nothing beside the Docker is needed to build):
+    1. Set permition to execute for client/gradlew script (sudo chmod +x gradlew).
+    1. From /client directory run command to build Docker image: 
+    	sudo docker build . -t fruit-recognizer
+    2. From /client directory run command to run Docker image in a container:
+    	sudo docker run --mount type=bind,source="$(pwd)/..",target=/app fruit-recognizer
+	NOTE: Yes, you need to bind mount the whole project, with server, because code in client depends on .git directory - this will be fixed as soon as client will reside in its own repo.
+    3. Generated APK is located under client/app/build/outputs/apk/debug
+    
+2. Using Gradle (NOTE: JDK8 and Android SDK 28 with Android Build Tools 28.0.3 are needed in order to build APK):
+    1. Set permition to execute for client/gradlew script (sudo chmod +x .gradlew).
+    2. From /client directory run command to build APK: 
+    	sudo ./gradlew clean build
+	on Linux, or
+	gradlew clean build
+	on Windows
+    3. Generated APK is located under client/app/build/outputs/apk/debug
 
