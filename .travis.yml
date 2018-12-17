@@ -40,3 +40,4 @@ jobs:
         script:
         - docker run --rm --mount type=bind,source="$(pwd)/..",target=/app ./gradlew clean build check
 
+
