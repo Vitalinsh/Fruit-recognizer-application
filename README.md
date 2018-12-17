@@ -3,20 +3,23 @@
 Dataset - "Fruits 360 dataset" from kaggle: https://www.kaggle.com/moltean/fruits
 
 
-To run server and classificator you need:
+There are 2 ways to run server and classificator:
 
-1. Windows OS
-
-2. Install python 3.6 interpreter
-
-3. Install all packages from requirements.txt
-To do this use command in command line:
-	pip install -r requirements.txt
+1. Without using Docker:
+	1. Install python 3.6 interpreter
+	2. Install all packages from requirements.txt
+		To do this use command in command line:
+			pip install -r requirements.txt
 	
-4. Run server.py file to start the server
-
-5. Run testClient.py file to check the work of classificator. It send picture to server and print classification result.
-
+	3. Run server.py file to start the server
+	4. Run send_picture_for_checking.py script to check the work of classificator. It send picture to server and print classification result.
+	
+2. Using Docker:
+	1. From /root directory run command to build Docker image: 
+    	sudo docker build -t recognitron
+	2. From /root directory run command to run Docker image in a container:
+    	sudo docker run -d -p 4000:80 recognitron
+		
 
 To create Android Debug APK:
 
