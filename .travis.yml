@@ -32,7 +32,7 @@ jobs:
             #- extra
         services:
         - docker
-        
+
         addons:
             apt:
                 packages:
@@ -43,6 +43,6 @@ jobs:
         - docker build -q -t fruit-recognizer-app .
 
         script:
-        - docker run --rm --mount type=bind,source="$(pwd)/..",target=/app ./gradlew clean build check
+        - docker run --rm --mount type=bind,source="${pwd}/..",target=/app ./gradlew clean build check
 
 
