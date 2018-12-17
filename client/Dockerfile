@@ -21,8 +21,6 @@ RUN $ANDROID_HOME/tools/bin/sdkmanager "build-tools;${ANDROID_BUILD_TOOLS_VERSIO
     "platforms;android-${ANDROID_VERSION}" \
     "platform-tools"
 
-RUN mkdir /app
-WORKDIR /app
-  
-CMD ["./gradlew", "clean", "build"]
+WORKDIR /app/client
 
+CMD ["./gradlew", "clean", "build"]
