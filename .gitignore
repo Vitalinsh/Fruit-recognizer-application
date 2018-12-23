@@ -104,9 +104,13 @@ venv.bak/
 .mypy_cache/
 
 # Pycharm
+.idea/
 .idea
 
 logs/
 dataset/
 tb_logs/
 temp/
+
+#cleint docker build side effect
+.gradle

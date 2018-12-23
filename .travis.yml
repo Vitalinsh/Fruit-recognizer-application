@@ -25,17 +25,24 @@ jobs:
         jdk: oraclejdk8
         android:
         components:
-            - tools
-            - platform-tools
-            - build-tools-28.0.3
-            - android-28
-            - extra
+            #- tools
+            #- platform-tools
+            #- build-tools-28.0.3
+            #- android-28
+            #- extra
         services:
         - docker
+
+        addons:
+            apt:
+                packages:
+                - docker-ce
+
         before_install:
         - cd client
-        - docker build -t recognitronandroidapp .
+        - docker build -q -t fruit-recognizer-app .
+
         script:
-        - ./gradlew build connectedCheck
-        - docker run — rm -v “$PWD”:/home/gradle/ -w /home/gradle/Recognitron/android-build:part1 gradle -PdisablePreDex RecognitronApp
+        - docker run --rm --mount type=bind,source="$(pwd)/..",target=/app fruit-recognizer-app ./gradlew clean build check
+
 
