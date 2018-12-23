@@ -22,6 +22,16 @@ reco = FruitRecognizer()
 app = Flask(__name__)
 
 
+@app.route('/', methods=['GET'])
+def main_page():
+    return "This is fruit recognizer API."
+
+
+@app.route('/main', methods=['GET'])
+def main_page2():
+    return "This is fruit recognizer API."
+
+
 # route http posts to this method
 @app.route('/api/recognize', methods=['POST'])
 def test():
@@ -59,4 +69,4 @@ def shutdown():
 
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=5000, debug=False, threaded=False)
+    app.run(host="0.0.0.0", port=5000, debug=False, threaded=False)
