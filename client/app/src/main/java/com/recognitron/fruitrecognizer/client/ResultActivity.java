@@ -16,29 +16,38 @@ import java.lang.ref.WeakReference;
 public class ResultActivity extends AppCompatActivity {
 
     private static final String TAG = "ResultActivity";
+    private static AsyncTask<Void, Void, RequestSender.PostResponse> requestTask;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_result);
+        requestTask = null;
     }
 
     @Override
     protected void onStart() {
         super.onStart();
         Log.i(TAG, "Requesting recognition...");
-        new GetRecognitionResponseTask(this).execute();
+        requestTask = new RequestTask(this).execute();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (requestTask != null)
+            requestTask.cancel(true);
     }
 
     public void reportWrongRecognition(View view) {}
 
     public void showFruitInfo(View view) {}
 
-    private static class GetRecognitionResponseTask extends AsyncTask<Void, Void, RequestSender.PostResponse> {
+    private static class RequestTask extends AsyncTask<Void, Void, RequestSender.PostResponse> {
 
         private WeakReference<ResultActivity> activityRef;
 
-        GetRecognitionResponseTask(ResultActivity context) {
+        RequestTask(ResultActivity context) {
             activityRef = new WeakReference<>(context);
         }
 
