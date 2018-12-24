@@ -16,8 +16,8 @@ from RequestValidator import getImageByteArray
 global graph
 graph = tf.get_default_graph()
 
-# version = subprocess.check_output(["git", "describe"]).strip()
-# print(version)
+version = subprocess.check_output(["git", "describe"]).strip()
+print(version)
 
 reco = FruitRecognizer()
 app = Flask(__name__)
