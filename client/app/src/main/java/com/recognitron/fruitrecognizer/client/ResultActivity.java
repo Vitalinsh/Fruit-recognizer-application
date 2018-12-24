@@ -11,12 +11,15 @@ import android.widget.TextView;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.lang.ref.WeakReference;
+import java.util.Random;
 
 public class ResultActivity extends AppCompatActivity {
 
     private static final String TAG = "ResultActivity";
     private static AsyncTask<Void, Void, RequestSender.PostResponse> requestTask;
+    private static final int DELAY_CAP = 120;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,8 +38,11 @@ public class ResultActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (requestTask != null)
-            requestTask.cancel(true);
+        if (requestTask != null) {
+            if (requestTask.cancel(true))
+                Log.i(TAG, "Request cancelled");
+
+        }
     }
 
     public void reportWrongRecognition(View view) {}
@@ -53,14 +59,40 @@ public class ResultActivity extends AppCompatActivity {
 
         @Override
         protected RequestSender.PostResponse doInBackground(Void... voids) {
-            return new RequestSender(ServerConfig.SERVER_URI)
-                    .postWithByteData(
-                            ServerConfig.REQUEST_RECOGNITION_PATH,
-                            BitmapHolder.getInstance().getByteArray(),
-                            "image",
-                            "image",
-                            "image/*png"
-                    );
+            RequestSender sender = new RequestSender(ServerConfig.SERVER_URI);
+            RequestSender.PostResponse response = null;
+            int secDelay = 5;
+            int delayDelta = 2;
+            do {
+                Random rand = new Random(System.currentTimeMillis());
+                try {
+                    response = sender
+                            .postWithByteData(
+                                    ServerConfig.REQUEST_RECOGNITION_PATH,
+                                    BitmapHolder.getInstance().getByteArray(),
+                                    "image",
+                                    "image",
+                                    "image/*png"
+                            );
+                } catch (IOException e) {
+                    try {
+                        long delay = secDelay + rand.nextInt(delayDelta);
+                        Log.i(TAG, "Unable to connect to server. Reconnecting in " + delay + " seconds");
+                        Thread.sleep(delay * 1000);
+                    } catch (InterruptedException e1) {
+                        continue;
+                    }
+                    if (secDelay < DELAY_CAP) {
+                        secDelay = secDelay * 2;
+                        delayDelta = delayDelta * 2;
+                    }
+                    continue;
+                }
+                Log.i(TAG, "Successfully connected to server");
+                break;
+            } while (!isCancelled());
+
+            return response;
         }
 
         @Override
