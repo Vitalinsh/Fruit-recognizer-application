@@ -107,10 +107,14 @@ venv.bak/
 .idea/
 .idea
 
+# Visual Studio Code
+.vscode/
+
 logs/
 dataset/
 tb_logs/
 temp/
+saved_models/
 
 #cleint docker build side effect
 .gradle

@@ -2,6 +2,7 @@ import os
 
 import numpy as np
 import cv2
+from google_drive_downloader import GoogleDriveDownloader as gdd
 from keras.models import model_from_json
 from keras.models import Sequential
 from keras.layers import Dense, Flatten, Dropout, Conv2D, MaxPooling2D
@@ -9,12 +10,16 @@ from keras.regularizers import l2
 
 package_dir = os.path.abspath(os.path.dirname(__file__))
 saved_dir = os.path.join(package_dir, "saved_models")
-model_path = os.path.join(saved_dir, "model1_vgg16_architecture.json")
-weights_path = os.path.join(saved_dir, "model1_vgg16_best1_weights.hdf5")
+if not os.path.exists(saved_dir):
+    os.makedirs(saved_dir)
 
+model_path = os.path.join(saved_dir, "model2.4_90classes_architecture.json")
+weights_path = os.path.join(saved_dir, "model2.4_90classes.hdf5")
 
 class FruitRecognizer:
-    """Class for classification fruit on the picture"""
+    """Class for classification fruit on the picture.
+    Model 2.4 supports 90 classes.
+    """
 
     def __init__(self,
                  model_path=model_path,
@@ -45,42 +50,73 @@ class FruitRecognizer:
                                optimizer="adam", metrics=['accuracy'])
 
         else:
+            if not os.path.exists(model_path):
+                self.load_from_cloud(model_path, weights_path)
+
             with open(model_path, "r") as json_file:
                 loaded_model = json_file.read()
             self.model = model_from_json(loaded_model)
-
             self.model.load_weights(weights_path)
-
             self.model.compile(loss="categorical_crossentropy",
                                optimizer="adam", metrics=["accuracy"])
 
     def predict(self, image, return_probs=False):
         """
         Parameters:
-        image : ndarray of shape like (100, 100, 3)
+        image : array of shape like (100, 100, 3)
                 Represents 3-channel picture.
 
         Returns:
         predict : int, if return_probs == False
                 ndarray of class probabilities, if return_probs == True
         """
-        classes = ['Apple Red Yellow', 'Apple Golden 1', 'Avocado',
-                   'Avocado ripe', 'Banana', 'Cocos', 'Dates', 'Granadilla',
-                   'Grape Pink', 'Grape White', 'Kiwi', 'Kumquats', 'Lemon',
-                   'Lemon Meyer', 'Limes', 'Nectarine', 'Orange', 'Peach',
-                   'Peach Flat', 'Apricot']
+        classes = ['Apple Braeburn', 'Apple Golden 1', 'Apple Golden 2',
+                   'Apple Golden 3', 'Apple Granny Smith', 'Apple Red 1',
+                   'Apple Red 2', 'Apple Red 3', 'Apple Red Delicious',
+                   'Apple Red Yellow 1', 'Apple Red Yellow 2', 'Apricot',
+                   'Avocado', 'Avocado ripe', 'Banana', 'Banana Lady Finger',
+                   'Banana Red', 'Cactus fruit', 'Cantaloupe 1',
+                   'Cantaloupe 2', 'Carambula', 'Cherry 1', 'Cherry 2',
+                   'Cherry Rainier', 'Cherry Wax Black', 'Cherry Wax Red',
+                   'Cherry Wax Yellow', 'Chestnut', 'Clementine', 'Cocos',
+                   'Dates', 'Granadilla', 'Grape Blue', 'Grape Pink',
+                   'Grape White', 'Grape White 2', 'Grape White 3',
+                   'Grape White 4', 'Grapefruit Pink', 'Grapefruit White',
+                   'Guava', 'Huckleberry', 'Kaki', 'Kiwi', 'Kumquats',
+                   'Lemon', 'Lemon Meyer', 'Limes', 'Lychee', 'Mandarine',
+                   'Mango', 'Mangostan', 'Maracuja', 'Melon Piel de Sapo',
+                   'Mulberry', 'Nectarine', 'Orange', 'Papaya',
+                   'Passion Fruit', 'Peach', 'Peach 2', 'Peach Flat', 'Pear',
+                   'Pear Abate', 'Pear Monster', 'Pear Williams', 'Pepino',
+                   'Physalis', 'Physalis with Husk', 'Pineapple',
+                   'Pineapple Mini', 'Pitahaya Red', 'Plum', 'Pomegranate',
+                   'Quince', 'Rambutan', 'Raspberry', 'Redcurrant', 'Salak',
+                   'Strawberry', 'Strawberry Wedge', 'Tamarillo', 'Tangelo',
+                   'Tomato 1', 'Tomato 2', 'Tomato 3', 'Tomato 4',
+                   'Tomato Cherry Red', 'Tomato Maroon', 'Walnut']
 
         image, squared_img = self.img_preprocessing(image)
 
         if return_probs:
-            predict = self.model.predict(image)
+            predict = self.model.predict_proba(image)
         else:
-            predict = classes[np.argmax(self.model.predict(image))]
+            probas = self.model.predict_proba(image)
+            probas = np.squeeze(probas)
+
+            predict = zip(probas, classes)
+            predict = sorted(predict, key=lambda x: x[0])
+            predict = list(reversed(predict))
+            predict = predict[: 3]
+            # Create predict string for output with probabilities
+            predict = ["\n%s - %.2f%%" % (x[1], x[0]*100) for x in predict]
+            predict = " ".join(predict)
+            # predict = classes[np.argmax(self.model.predict(image))]
 
         if squared_img or return_probs:
             return predict
         else:
-            return predict + "Image isn't square! Prediction may be incorrect!"
+            return predict + "\nImage isn't square! " \
+                             "Prediction may be incorrect!"
 
     def img_preprocessing(self, image):
         """
@@ -99,3 +135,17 @@ class FruitRecognizer:
         image = image / 255
 
         return image, squared_img
+
+    def load_from_cloud(self, model_load_path, weights_load_path):
+        gdd.download_file_from_google_drive(
+                                file_id='1vhDSkVIQd0Xx1wdjuHAUtRyWhAxmGBa9',
+                                dest_path=model_load_path,
+                                unzip=False)
+
+        gdd.download_file_from_google_drive(
+                                file_id='1ol6yU0YaL9_T5YHlQyLWmENUE74Jxq-c',
+                                dest_path=weights_load_path,
+                                unzip=False)
+        print("Model loaded from cloud")
+
+

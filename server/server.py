@@ -6,6 +6,7 @@ import jsonpickle
 import numpy as np
 import cv2
 import tensorflow as tf
+import matplotlib.pyplot as plt
 
 from config_server import config
 sys.path.append(config.project_dir)
@@ -15,8 +16,8 @@ from RequestValidator import getImageByteArray
 global graph
 graph = tf.get_default_graph()
 
-version = subprocess.check_output(["git", "describe"]).strip()
-print(version)
+# version = subprocess.check_output(["git", "describe"]).strip()
+# print(version)
 
 reco = FruitRecognizer()
 app = Flask(__name__)
@@ -45,6 +46,9 @@ def test():
 
     image = np.asarray(bytearray(fileReceived[1]), dtype="uint8")
     image = cv2.imdecode(image, cv2.IMREAD_COLOR)
+    image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
+    # plt.imshow(image)
+    # plt.show()
     with graph.as_default():
         res = reco.predict(image)
 
