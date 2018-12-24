@@ -1,15 +1,17 @@
 package com.recognitron.fruitrecognizer.client;
 
+import android.util.Log;
 import okhttp3.*;
 import java.io.IOException;
+import java.util.Random;
 
 class RequestSender {
     private String base_url;
     private OkHttpClient client;
 
     private static final String BAD_DATA_MSG = "Unable to proceed: bad data";
-    private static final String SERVER_UNAVAILABLE_MSG = "Server Unavailable";
     private static final String BAD_RESPONSE_MSG = "Bad response format";
+
 
     RequestSender(String base_url){
         this.base_url = base_url;
@@ -18,7 +20,7 @@ class RequestSender {
 
     PostResponse postWithByteData(
             String url, byte[] bytes, String name, String filename, String mediaType
-    ) {
+    ) throws IOException {
 
         if (bytes == null || base_url == null || url == null || name == null || filename == null
                 || mediaType == null || HttpUrl.parse(base_url + url) == null) {
@@ -30,15 +32,10 @@ class RequestSender {
                     .addFormDataPart(name, filename, RequestBody.create(MediaType.parse(mediaType), bytes))
                     .build();
 
-        Response response;
-        try {
-            String fullUrl = base_url + url;
-            response = client.newCall(
-                    new Request.Builder().url(fullUrl).post(body).build()
-            ).execute();
-        } catch (IOException e) {
-            return new PostResponse(SERVER_UNAVAILABLE_MSG, false);
-        }
+        String fullUrl = base_url + url;
+        Response response = client.newCall(
+                new Request.Builder().url(fullUrl).post(body).build()
+        ).execute();
 
         try {
             if (response.code() != 200) {

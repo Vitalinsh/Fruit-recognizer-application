@@ -5,6 +5,8 @@ import okhttp3.mockwebserver.MockWebServer;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.IOException;
+
 import static org.junit.Assert.*;
 
 public class RequestSenderTest {
@@ -25,7 +27,7 @@ public class RequestSenderTest {
     }
 
     @Test
-    public void postWithByteData_NullUrl(){
+    public void postWithByteData_NullUrl() throws IOException {
         responseResult = requestSender
                 .postWithByteData(null, new byte[]{0}, "name", "file", CORRECT_MEDIA_TYPE);
         assertNotNull(responseResult);
@@ -33,7 +35,7 @@ public class RequestSenderTest {
     }
 
     @Test
-    public void postWithByteData_NullData(){
+    public void postWithByteData_NullData() throws IOException {
         responseResult = requestSender
                 .postWithByteData(fulluri, null, "name", "file", CORRECT_MEDIA_TYPE);
         assertNotNull(responseResult);
@@ -41,7 +43,7 @@ public class RequestSenderTest {
     }
 
     @Test
-    public void postWithByteData_NullName(){
+    public void postWithByteData_NullName() throws IOException {
         responseResult = requestSender
                 .postWithByteData(fulluri, new byte[]{0}, null, "file", CORRECT_MEDIA_TYPE);
         assertNotNull(responseResult);
@@ -49,7 +51,7 @@ public class RequestSenderTest {
     }
 
     @Test
-    public void postWithByteData_NullFilename(){
+    public void postWithByteData_NullFilename() throws IOException {
         responseResult = requestSender
                 .postWithByteData(fulluri, new byte[]{0}, "name", null, CORRECT_MEDIA_TYPE);
         assertNotNull(responseResult);
@@ -57,31 +59,27 @@ public class RequestSenderTest {
     }
 
     @Test
-    public void postWithByteData_NullMediaType(){
+    public void postWithByteData_NullMediaType() throws IOException {
         responseResult = requestSender
                 .postWithByteData(fulluri, new byte[]{0}, "name", "file", null);
         assertNotNull(responseResult);
         assertTrue(!responseResult.isReadable());
     }
 
-    @Test
-    public void postWithByteData_BadMediaType(){
+    @Test(expected = IOException.class)
+    public void postWithByteData_BadMediaType() throws IOException {
         responseResult = requestSender
                 .postWithByteData(fulluri, new byte[]{0}, "name", "file", "quick brown fox");
-        assertNotNull(responseResult);
-        assertTrue(!responseResult.isReadable());
     }
 
-    @Test
-    public void postWithByteData_BadUrl(){
+    @Test(expected = IOException.class)
+    public void postWithByteData_BadUrl() throws IOException {
         responseResult = requestSender
-                .postWithByteData("http://quick brown fox", new byte[]{0}, "name", "file", CORRECT_MEDIA_TYPE);
-        assertNotNull(responseResult);
-        assertTrue(!responseResult.isReadable());
+                .postWithByteData("http://quickbrownfox", new byte[]{0}, "name", "file", CORRECT_MEDIA_TYPE);
     }
 
     @Test
-    public void postWithByteData_NotOKResponse(){
+    public void postWithByteData_NotOKResponse() throws IOException {
         MockResponse response400 = new MockResponse();
         response400.setResponseCode(400);
         server.enqueue(response400);
@@ -93,7 +91,7 @@ public class RequestSenderTest {
     }
 
     @Test
-    public void postWithByteData_Correct(){
+    public void postWithByteData_Correct() throws IOException {
         MockResponse nullBodyResponse = new MockResponse();
         nullBodyResponse.setResponseCode(200);
         nullBodyResponse.setBody("message");
