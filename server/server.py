@@ -22,6 +22,16 @@ reco = FruitRecognizer()
 app = Flask(__name__)
 
 
+@app.route('/', methods=['GET'])
+def main_page():
+    return "This is fruit recognizer API."
+
+
+@app.route('/main', methods=['GET'])
+def main_page2():
+    return "This is fruit recognizer API."
+
+
 # route http posts to this method
 @app.route('/api/recognize', methods=['POST'])
 def test():
@@ -45,18 +55,18 @@ def test():
                     mimetype="application/json")
 
 
-def shutdown_server():
-    func = request.environ.get('werkzeug.server.shutdown')
-    if func is None:
-        raise RuntimeError('Not running with the Werkzeug Server')
-    func()
+#def shutdown_server():
+#    func = request.environ.get('werkzeug.server.shutdown')
+#    if func is None:
+#        raise RuntimeError('Not running with the Werkzeug Server')
+#    func()
 
 
-@app.route('/shutdown', methods=['POST'])
-def shutdown():
-    shutdown_server()
-    return 'Server shutting down...'
+#@app.route('/shutdown', methods=['POST'])
+#def shutdown():
+#    shutdown_server()
+#    return 'Server shutting down...'
 
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=5000, debug=False, threaded=False)
+    app.run(host="0.0.0.0", port=5000, debug=False, threaded=False)
