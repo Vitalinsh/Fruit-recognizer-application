@@ -4,16 +4,18 @@ import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import okhttp3.Response;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.ref.WeakReference;
 
 public class ResultActivity extends AppCompatActivity {
+
+    private static final String TAG = "ResultActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,6 +26,7 @@ public class ResultActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        Log.i(TAG, "Requesting recognition...");
         new GetRecognitionResponseTask(this).execute();
     }
 
@@ -66,6 +69,7 @@ public class ResultActivity extends AppCompatActivity {
                     text = response.getMessage();
                 }
             }
+            Log.i(TAG, "Recieved message: " + text);
             ImageView imageView = activity.findViewById(R.id.imageView);
             Bitmap blurredBitmap = BitmapHolder.getInstance().getBlurredBitmap();
             if(blurredBitmap != null && response.isReadable())

@@ -1,5 +1,6 @@
 package com.recognitron.fruitrecognizer.client;
 
+import android.util.Log;
 import okhttp3.*;
 import java.io.IOException;
 import java.util.Random;
@@ -9,8 +10,8 @@ class RequestSender {
     private OkHttpClient client;
 
     private static final String BAD_DATA_MSG = "Unable to proceed: bad data";
-    private static final String SERVER_UNAVAILABLE_MSG = "Server Unavailable";
     private static final String BAD_RESPONSE_MSG = "Bad response format";
+    private static final String TAG = "RequestSender";
 
     private int secDelay;
     private int delayDelta;
@@ -49,7 +50,9 @@ class RequestSender {
                 ).execute();
             } catch (IOException e) {
                 try {
-                    Thread.sleep((secDelay + rand.nextInt(delayDelta)) * 1000);
+                    long delay = secDelay + rand.nextInt(delayDelta);
+                    Log.i(TAG, "Unable to connect to server. Reconncting in " + delay + " seconds");
+                    Thread.sleep(delay * 1000);
                 } catch (InterruptedException e1) {
                    continue;
                 }
@@ -59,6 +62,7 @@ class RequestSender {
                 }
                 continue;
             }
+            Log.i(TAG, "Successfully connected to server");
             secDelay = 5;
             delayDelta = 2;
             break;
