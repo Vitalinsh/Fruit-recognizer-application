@@ -6,7 +6,7 @@ There is list of all fruits in the end of file.
 
 Dataset - "Fruits 360 dataset" from kaggle: https://www.kaggle.com/moltean/fruits
 
-##There are 2 ways to run server and classificator:
+## There are 2 ways to run server and classificator:
 
 1. Without using Docker:
 	1. Install python 3.6 interpreter (64-bit)
